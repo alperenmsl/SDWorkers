@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>SmartDesk Hub</title>
+    <style>
+      :root {
+        --bg: #070b14;
+        --card: #0e1626cc;
+        --bd: #94a3b826;
+        --tx: #e6edf7;
+        --mu: #7f8ca3;
+        --g: #22e58b;
+        --y: #ffc53d;
+        --r: #ff4d5e;
+        --c: #38bdf8;
+        --acc: #38bdf8;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      body {
+        background:
+          radial-gradient(1000px 500px at 0 -10%, #12294a77, transparent),
+          var(--bg);
+        color: var(--tx);
+        font:
+          14px/1.45 system-ui,
+          sans-serif;
+        padding: 20px;
+        min-height: 100vh;
+      }
+      .m {
+        font-family: ui-monospace, Consolas, monospace;
+      }
+      .wrap {
+        max-width: 1250px;
+        margin: auto;
+      }
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      h1 {
+        font-size: 15px;
+        letter-spacing: 0.2em;
+      }
+      h3 {
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        color: var(--mu);
+        text-transform: uppercase;
+        margin-bottom: 12px;
+      }
+      .pill {
+        padding: 7px 14px;
+        border-radius: 99px;
+        border: 1px solid var(--bd);
+        background: var(--card);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--r);
+      }
+      .on .dot {
+        background: var(--g);
+        animation: p 1.8s infinite;
+      }
+      @keyframes p {
+        70% {
+          box-shadow: 0 0 0 9px #0000;
+        }
+        0% {
+          box-shadow: 0 0 0 0 #22e58b88;
+        }
+      }
+      .grid {
+        display: grid;
+        gap: 14px;
+        grid-template-columns: 340px 1fr;
+      }
+      @media (max-width: 900px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--bd);
+        border-radius: 16px;
+        padding: 16px;
+        backdrop-filter: blur(10px);
+      }
+      .col {
+        display: grid;
+        gap: 14px;
+        align-content: start;
+      }
+      .k {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+        gap: 10px;
+      }
+      .k div {
+        background: #0b1220;
+        border: 1px solid var(--bd);
+        border-radius: 12px;
+        padding: 10px 12px;
+      }
+      .k small {
+        display: block;
+        color: var(--mu);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      .k b {
+        font:
+          600 22px ui-monospace,
+          monospace;
+      }
+      .ring {
+        position: relative;
+        width: 240px;
+        margin: 0 auto;
+      }
+      .ring svg {
+        width: 100%;
+        filter: drop-shadow(0 0 14px var(--acc));
+      }
+      .trk {
+        fill: none;
+        stroke: #1b2639;
+        stroke-width: 11;
+      }
+      .arc {
+        fill: none;
+        stroke: var(--acc);
+        stroke-width: 11;
+        stroke-linecap: round;
+        stroke-dasharray: 703.7;
+        transform: rotate(-90deg);
+        transform-origin: 130px 130px;
+        transition:
+          stroke-dashoffset 1s linear,
+          stroke 0.5s;
+      }
+      .ctr {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-content: center;
+        text-align: center;
+      }
+      .ctr b {
+        font:
+          600 54px ui-monospace,
+          monospace;
+      }
+      .ctr span {
+        color: var(--acc);
+        letter-spacing: 0.3em;
+        font-size: 11px;
+      }
+      .lamps {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin: 10px 0;
+      }
+      .lamps i {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: currentColor;
+        opacity: 0.15;
+        transition: 0.4s;
+      }
+      .lamps i.on {
+        opacity: 1;
+        box-shadow: 0 0 16px currentColor;
+      }
+      button {
+        font: 600 12px system-ui;
+        letter-spacing: 0.1em;
+        padding: 11px;
+        border-radius: 10px;
+        border: 1px solid var(--bd);
+        background: #111b2e;
+        color: var(--tx);
+        cursor: pointer;
+      }
+      button:hover {
+        border-color: var(--c);
+      }
+      .pri {
+        background: linear-gradient(135deg, #0ea5e9, #6366f1);
+        border: 0;
+      }
+      .row {
+        display: flex;
+        gap: 8px;
+      }
+      .row > * {
+        flex: 1;
+      }
+      input[type="range"] {
+        width: 100%;
+        accent-color: var(--c);
+        margin: 10px 0;
+      }
+      .chart {
+        display: flex;
+        align-items: flex-end;
+        gap: 5px;
+        height: 130px;
+      }
+      .bar {
+        flex: 1;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: center;
+        font-size: 9px;
+        color: var(--mu);
+        gap: 4px;
+      }
+      .bar i {
+        width: 100%;
+        background: linear-gradient(var(--c), #6366f1);
+        border-radius: 5px 5px 2px 2px;
+        min-height: 2px;
+        transition: height 0.8s;
+      }
+      .bar:last-child i {
+        background: linear-gradient(var(--g), #0ea5a0);
+      }
+      .two {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      @media (max-width: 700px) {
+        .two {
+          grid-template-columns: 1fr;
+        }
+      }
+      svg.sp {
+        width: 100%;
+        height: 60px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      td,
+      th {
+        padding: 7px 6px;
+        border-bottom: 1px solid var(--bd);
+        text-align: left;
+      }
+      th {
+        color: var(--mu);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        font-weight: 500;
+      }
+      .tag {
+        padding: 2px 9px;
+        border-radius: 99px;
+        font-size: 11px;
+      }
+      .t-focus {
+        background: #22e58b22;
+        color: var(--g);
+      }
+      .t-abort {
+        background: #ff4d5e22;
+        color: var(--r);
+      }
+      .t-break {
+        background: #38bdf822;
+        color: var(--c);
+      }
+      #al {
+        position: fixed;
+        inset: 0;
+        background: #000d;
+        display: none;
+        place-items: center;
+        z-index: 9;
+        text-align: center;
+      }
+      #al.show {
+        display: grid;
+      }
+      #al div {
+        padding: 40px;
+        border-radius: 24px;
+        background: #0d1424;
+        border: 2px solid var(--ac, var(--r));
+        box-shadow: 0 0 90px var(--ac, var(--r));
+        max-width: 440px;
+        animation: g 1s infinite;
+      }
+      @keyframes g {
+        50% {
+          transform: scale(1.04);
+        }
+      }
+      #al h2 {
+        font-size: 34px;
+        letter-spacing: 0.15em;
+        margin-bottom: 10px;
+      }
+      #al p {
+        color: #b5c0d3;
+        margin-bottom: 22px;
+      }
+      body.off .grid {
+        filter: grayscale(1) opacity(0.5);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>SMARTDESK <span style="color: var(--mu)">HUB</span></h1>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap">
+          <span class="pill m" id="clk"></span
+          ><span class="pill" id="net"
+            ><span class="dot"></span><span id="nt">VERBINDE …</span
+            ><span class="m" id="ms" style="color: var(--mu)"></span
+          ></span>
+        </div>
+      </header>
+      <div class="grid">
+        <div class="col">
+          <div class="card">
+            <h3>Live</h3>
+            <div class="ring">
+              <svg viewBox="0 0 260 260">
+                <circle class="trk" cx="130" cy="130" r="112" />
+                <circle class="arc" id="arc" cx="130" cy="130" r="112" />
+              </svg>
+              <div class="ctr"><span id="ph">–</span><b id="tm">--:--</b></div>
+            </div>
+            <div class="lamps">
+              <i id="lr" style="color: var(--r)"></i
+              ><i id="ly" style="color: var(--y)"></i
+              ><i id="lg" style="color: var(--g)"></i>
+            </div>
+            <div
+              class="row"
+              style="justify-content: space-between; color: var(--mu)"
+            >
+              <span
+                >Lernzeit
+                <b class="m" id="sv" style="color: var(--tx)"></b></span
+              ><span id="src" class="m"></span>
+            </div>
+            <input type="range" id="sl" min="10" max="60" />
+            <div class="row">
+              <button class="pri" onclick="cmd('start')">START</button
+              ><button onclick="cmd('stop')">STOPP</button>
+            </div>
+            <div class="row" style="margin-top: 8px">
+              <button onclick="cmd('ledtest')">LED-TEST</button
+              ><button onclick="fetch('/test-alarm')">ALARM-TEST</button>
+            </div>
+          </div>
+          <div class="card">
+            <h3>ESP32</h3>
+            <div class="k">
+              <div><small>Temperatur</small><b id="tp">–</b></div>
+              <div><small>WLAN dBm</small><b id="rs">–</b></div>
+              <div><small>Poti</small><b id="pt">–</b></div>
+              <div><small>Ausfälle</small><b id="ou">0</b></div>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card">
+            <h3>Übersicht</h3>
+            <div class="k">
+              <div><small>Heute</small><b id="k1">0</b></div>
+              <div><small>7 Tage</small><b id="k2">0</b></div>
+              <div><small>Einheiten</small><b id="k3">0</b></div>
+              <div><small>Ø Einheit</small><b id="k4">0</b></div>
+              <div><small>Längste</small><b id="k5">0</b></div>
+              <div><small>Abbrüche</small><b id="k6">0</b></div>
+            </div>
+            <h3 style="margin-top: 16px">Fokusminuten · 14 Tage</h3>
+            <div class="chart" id="ch"></div>
+          </div>
+          <div class="two">
+            <div class="card">
+              <h3>Latenz (ms)</h3>
+              <svg class="sp" viewBox="0 0 300 60" preserveAspectRatio="none">
+                <polyline
+                  id="p1"
+                  fill="none"
+                  stroke="#38bdf8"
+                  stroke-width="2"
+                  vector-effect="non-scaling-stroke"
+                />
+              </svg>
+            </div>
+            <div class="card">
+              <h3>Chip-Temperatur (°C)</h3>
+              <svg class="sp" viewBox="0 0 300 60" preserveAspectRatio="none">
+                <polyline
+                  id="p2"
+                  fill="none"
+                  stroke="#ffc53d"
+                  stroke-width="2"
+                  vector-effect="non-scaling-stroke"
+                />
+              </svg>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Verlauf</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>ZEIT</th>
+                  <th>TYP</th>
+                  <th>MINUTEN</th>
+                </tr>
+              </thead>
+              <tbody id="tb"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="al">
+      <div>
+        <h2 id="ah"></h2>
+        <p id="ap"></p>
+        <button
+          class="pri"
+          style="width: 100%; padding: 14px"
+          onclick="ackIt()"
+        >
+          VERSTANDEN
+        </button>
+      </div>
+    </div>
+    <script>
+      const $ = (i) => document.getElementById(i),
+        COL = {
+          idle: "#38bdf8",
+          green: "#22e58b",
+          yellow: "#ffc53d",
+          red: "#ff4d5e",
+        },
+        p2 = (n) => String(n).padStart(2, "0");
+      let ctx,
+        loop,
+        drag = false,
+        was = null;
+      const cmd = (c, q = "") => fetch("/esp/" + c + q);
+      setInterval(
+        () => ($("clk").textContent = new Date().toLocaleTimeString("de-AT")),
+        1000,
+      );
+      $("sl").oninput = (e) => {
+        drag = true;
+        $("sv").textContent = e.target.value + " min";
+      };
+      $("sl").onchange = (e) =>
+        cmd("set", "?min=" + e.target.value).then(() => (drag = false));
+      document.addEventListener(
+        "click",
+        () => {
+          ctx = ctx || new AudioContext();
+          ctx.resume();
+          if (window.Notification && Notification.permission === "default")
+            Notification.requestPermission();
+        },
+        { once: true },
+      );
+      function siren() {
+        ctx = ctx || new AudioContext();
+        const t = ctx.currentTime;
+        for (let i = 0; i < 8; i++) {
+          const o = ctx.createOscillator(),
+            g = ctx.createGain();
+          o.type = "square";
+          o.frequency.value = i % 2 ? 1500 : 1000;
+          g.gain.value = 0.9;
+          o.connect(g);
+          g.connect(ctx.destination);
+          o.start(t + i * 0.2);
+          o.stop(t + i * 0.2 + 0.17);
+        }
+      }
+      function showAlarm(t) {
+        const b = t === "break";
+        $("al").style.setProperty("--ac", b ? "#ff4d5e" : "#22e58b");
+        $("ah").textContent = b ? "PAUSE JETZT!" : "PAUSE VORBEI";
+        $("ap").textContent = b
+          ? "Ampel ist ROT – aufstehen, bewegen, trinken."
+          : "Du bist erholt – nächste Einheit kann starten.";
+        $("al").classList.add("show");
+        clearInterval(loop);
+        siren();
+        let n = 0;
+        loop = setInterval(() => {
+          if (++n >= 8) return clearInterval(loop);
+          siren();
+        }, 2200);
+        if (window.Notification && Notification.permission === "granted")
+          new Notification("SmartDesk", { body: $("ah").textContent });
+      }
+      function ackIt() {
+        fetch("/ack");
+        hide();
+      }
+      function hide() {
+        $("al").classList.remove("show");
+        clearInterval(loop);
+      }
+      const line = (a, mn) => {
+        const mx = Math.max(mn, ...a),
+          lo = Math.min(...a, mx - 1);
+        return a
+          .map(
+            (v, i) =>
+              ((i / 59) * 300).toFixed(1) +
+              "," +
+              (
+                56 -
+                ((v - (mn ? 0 : lo)) / (mx - (mn ? 0 : lo) || 1)) * 50
+              ).toFixed(1),
+          )
+          .join(" ");
+      };
+      const es = new EventSource("/events");
+      es.onmessage = (m) => {
+        const d = JSON.parse(m.data),
+          e = d.esp,
+          s = d.stats;
+        $("net").classList.toggle("on", d.online);
+        document.body.classList.toggle("off", !d.online);
+        $("nt").textContent = d.online ? "ESP32 ONLINE" : "ESP32 OFFLINE";
+        $("ms").textContent = d.online ? d.latency + " ms" : "";
+        if (d.ringing && d.ringing !== was) showAlarm(d.ringing);
+        if (!d.ringing && was) hide();
+        was = d.ringing;
+        if (e) {
+          document.documentElement.style.setProperty("--acc", COL[e.l]);
+          const idle = e.s === "idle";
+          $("ph").textContent = idle
+            ? "BEREIT"
+            : e.s === "break"
+              ? "PAUSE"
+              : e.l === "yellow"
+                ? "ENDSPURT"
+                : "FOKUS";
+          const r = idle ? e.set * 60 : e.rem;
+          $("tm").textContent = p2(Math.floor(r / 60)) + ":" + p2(r % 60);
+          $("arc").style.strokeDashoffset = idle
+            ? 0
+            : 703.7 * (1 - e.rem / e.len);
+          $("lr").className = e.l === "red" ? "on" : "";
+          $("ly").className = e.l === "yellow" ? "on" : "";
+          $("lg").className = e.l === "green" || idle ? "on" : "";
+          if (!drag) {
+            $("sl").value = e.set;
+            $("sv").textContent = e.set + " min";
+          }
+          $("sl").disabled = !idle;
+          $("src").textContent = e.src ? "POTI" : "MANUELL";
+          $("tp").textContent = e.temp > -50 ? e.temp.toFixed(1) : "–";
+          $("rs").textContent = e.rssi;
+          $("pt").textContent = e.raw;
+        }
+        $("ou").textContent = s.outages;
+        [
+          ["k1", s.today],
+          ["k2", s.week],
+          ["k3", s.sessions],
+          ["k4", s.avg],
+          ["k5", s.longest],
+          ["k6", s.aborted],
+        ].forEach(([i, v]) => ($(i).textContent = v));
+        const mx = Math.max(60, ...s.days.map((x) => x.min));
+        $("ch").innerHTML = s.days
+          .map(
+            (x) =>
+              `<div class="bar">${x.min || ""}<i style="height:${(x.min / mx) * 100}%"></i>${x.d.slice(8)}</div>`,
+          )
+          .join("");
+        if (d.hist.lat.length > 1) {
+          $("p1").setAttribute("points", line(d.hist.lat, 60));
+          $("p2").setAttribute(
+            "points",
+            line(
+              d.hist.temp.filter((v) => v > -50),
+              0,
+            ),
+          );
+        }
+        const N = { focus: "Fokus", abort: "Abbruch", break: "Pause" };
+        $("tb").innerHTML =
+          s.recent
+            .map(
+              (x) =>
+                `<tr><td class="m">${new Date(x.t).toLocaleString("de-AT", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}</td><td><span class="tag t-${x.type}">${N[x.type]}</span></td><td class="m">${x.min}</td></tr>`,
+            )
+            .join("") ||
+          '<tr><td colspan=3 style="color:var(--mu)">Noch keine Einheiten.</td></tr>';
+      };
+    </script>
+  </body>
+</html>
